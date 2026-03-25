@@ -39,3 +39,23 @@ Brute-force or backtracking approaches fail immediately due to $O(N!)$ complexit
 ### Complexity
 - **Time Complexity:** $O(N^2)$ — Directly constructs the adjacency matrix without search space exploration. Execution time is ~1ms for $N=1000$.
 - **Space Complexity:** $O(N^2)$ — Memory allocation strictly for the $N \times N$ adjacency matrix.
+
+## Project 3: Dynamic Graph Connectivity via Randomized XOR Hashing
+
+### Overview
+An extremely optimized C++ solution for maintaining graph connectivity under dynamic small edge deletions.
+**Acceptance Rate:** 2% (Extreme difficulty due to strict time limits and complex dynamic graph properties).
+
+### The Challenge
+Given a connected undirected graph ($N \le 10^4, M \le 10^5$), process $10^5$ queries. Each query tests if the graph remains connected after temporarily deleting up to 4 specific edges. A naive approach (running BFS/DFS per query) yields $O(Q \cdot (N+M))$ and critically fails the 2.0s time limit.
+
+### Algorithmic Architecture
+Implemented a cutting-edge **Randomized XOR Hashing** technique to reduce query time to $O(1)$:
+1. **Spanning Tree & Randomization:** Extracted a spanning tree. Assigned a random 64-bit integer to every non-tree edge using `mt19937_64`.
+2. **Cycle Accumulation:** The weight of each tree edge is precomputed via DFS as the XOR sum of all non-tree edges covering it (fundamental cycles).
+3. **Subset Evaluation (Linear Independence):** A subset of edges forms a valid disconnecting cut if and only if their XOR sum is exactly 0.
+4. **O(1) Queries:** Since at most 4 edges are removed, the algorithm simply evaluates the $2^C - 1$ subsets of the queried edges. If any subset XORs to 0, the graph is disconnected.
+
+### Complexity
+- **Time Complexity:** $O(N + M)$ for preprocessing, and $O(2^C)$ per query. Total time: $O(N + M + Q \cdot 2^C)$. Execution takes fractions of a second, completely bypassing the TLE bottleneck.
+- **Space Complexity:** $O(N + M)$ for adjacency lists and edge hash storage.
